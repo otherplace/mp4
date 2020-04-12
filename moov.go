@@ -11,10 +11,11 @@ import (
 //
 // Contains all meta-data. To be able to stream a file, the moov box should be placed before the mdat box.
 type MoovBox struct {
-	Mvhd *MvhdBox
-	Iods *IodsBox
-	Trak []*TrakBox
-	Udta *UdtaBox
+	Mvhd  *MvhdBox
+	Iods  *IodsBox
+	Trak  []*TrakBox
+	Udta  *UdtaBox
+	Boxes []Box
 }
 
 func DecodeMoov(r io.Reader) (Box, error) {

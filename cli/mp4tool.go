@@ -6,8 +6,8 @@ import (
 	"time"
 
 	cli "github.com/jawher/mow.cli"
-	"github.com/jfbus/mp4"
-	"github.com/jfbus/mp4/filter"
+	"github.com/otherplace/mp4"
+	"github.com/otherplace/mp4/filter"
 )
 
 func main() {
@@ -20,7 +20,8 @@ func main() {
 			defer fd.Close()
 			v, err := mp4.Decode(fd)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("Decode Error:", err)
+				os.Exit(1)
 			}
 			v.Dump()
 		}

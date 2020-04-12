@@ -8,11 +8,12 @@ import "io"
 //
 // Status: partially decoded (hmhd - hint tracks - and nmhd - null media - are ignored)
 type MinfBox struct {
-	Vmhd *VmhdBox
-	Smhd *SmhdBox
-	Stbl *StblBox
-	Dinf *DinfBox
-	Hdlr *HdlrBox
+	Vmhd  *VmhdBox
+	Smhd  *SmhdBox
+	Stbl  *StblBox
+	Dinf  *DinfBox
+	Hdlr  *HdlrBox
+	Boxes []Box
 }
 
 func DecodeMinf(r io.Reader) (Box, error) {

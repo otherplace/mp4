@@ -7,7 +7,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/jfbus/mp4"
+	"github.com/otherplace/mp4"
 )
 
 var (

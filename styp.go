@@ -6,21 +6,21 @@ import (
 	"io/ioutil"
 )
 
-// File Type Box (ftyp - mandatory)
+// (styp - mandatory for fMP4)
 //
 // Status: decoded
-type FtypBox struct {
+type StypBox struct {
 	MajorBrand       string
 	MinorVersion     []byte
 	CompatibleBrands []string
 }
 
-func DecodeFtyp(r io.Reader) (Box, error) {
+func DecodeStyp(r io.Reader) (Box, error) {
 	data, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
-	b := &FtypBox{
+	b := &StypBox{
 		MajorBrand:       string(data[0:4]),
 		MinorVersion:     data[4:8],
 		CompatibleBrands: []string{},
@@ -33,25 +33,25 @@ func DecodeFtyp(r io.Reader) (Box, error) {
 	return b, nil
 }
 
-func (b *FtypBox) Type() string {
-	return "ftyp"
+func (b *StypBox) Type() string {
+	return "styp"
 }
 
-func (b *FtypBox) Size() int {
+func (b *StypBox) Size() int {
 	return BoxHeaderSize + 8 + 4*len(b.CompatibleBrands)
 }
 
-func (b *FtypBox) Dump() {
+func (b *StypBox) Dump() {
 	fmt.Printf("Box type: %s\n", b.Type())
 	fmt.Printf("+- Major brand: %s\n", b.MajorBrand)
-	fmt.Printf("+- Minor version: 0x%d\n", b.MinorVersion)
+	fmt.Printf("+- Minor version: %s\n", b.MinorVersion)
 	fmt.Printf("+- Compatible brands: sizes = %d\n", len(b.CompatibleBrands))
 	for i, e := range b.CompatibleBrands {
 		fmt.Printf(" +- [%d]\t: %s\n", i, e)
 	}
 }
 
-func (b *FtypBox) Encode(w io.Writer) error {
+func (b *StypBox) Encode(w io.Writer) error {
 	err := EncodeHeader(b, w)
 	if err != nil {
 		return err
