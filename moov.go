@@ -7,7 +7,7 @@ import (
 
 // Movie Box (moov - mandatory)
 //
-// Status: partially decoded (anything other than mvhd, iods, trak or udta is ignored)
+// Status: partially decoded
 //
 // Contains all meta-data. To be able to stream a file, the moov box should be placed before the mdat box.
 type MoovBox struct {
@@ -15,6 +15,7 @@ type MoovBox struct {
 	Iods  *IodsBox
 	Trak  []*TrakBox
 	Udta  *UdtaBox
+	Mvex  *MvexBox
 	Boxes []Box
 }
 
@@ -34,6 +35,8 @@ func DecodeMoov(r io.Reader) (Box, error) {
 			m.Trak = append(m.Trak, b.(*TrakBox))
 		case "udta":
 			m.Udta = b.(*UdtaBox)
+		case "mvex":
+			m.Mvex = b.(*MvexBox)
 		}
 	}
 	return m, err
@@ -62,6 +65,9 @@ func (b *MoovBox) Dump() {
 	for i, t := range b.Trak {
 		fmt.Println("Track", i)
 		t.Dump()
+	}
+	if b.Mvex != nil {
+		b.Mvex.Dump()
 	}
 }
 
