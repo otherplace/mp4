@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 )
 
@@ -42,6 +41,7 @@ func init() {
 		"smhd": DecodeSmhd,
 		"dinf": DecodeDinf,
 		"dref": DecodeDref,
+		"sidx": DecodeSidx,
 		"stbl": DecodeStbl,
 		"stco": DecodeStco,
 		"stsc": DecodeStsc,
@@ -93,16 +93,24 @@ type Box interface {
 }
 
 type UkwnBox struct {
-	h    BoxHeader
-	Data []byte
+	h           BoxHeader
+	PayloadSize uint32
+	Data        []byte
 }
 
-func DecodeUkwnBox(r io.Reader) (Box, error) {
-	data, err := ioutil.ReadAll(r)
-	if err != nil {
-		return nil, err
+func DecodeUkwnBox(h BoxHeader, r io.Reader) (Box, error) {
+	var l int64
+	if lr, limited := r.(*io.LimitedReader); limited {
+		r = lr.R
+		l = lr.N
 	}
-	b := &UkwnBox{Data: data}
+	data := make([]byte, h.Size-BoxHeaderSize)
+	_, _ = r.Read(data)
+
+	b := &UkwnBox{
+		Data:        data,
+		PayloadSize: uint32(l),
+	}
 	return b, nil
 }
 
@@ -111,7 +119,7 @@ func (b *UkwnBox) Type() string {
 }
 
 func (b *UkwnBox) Size() int {
-	return 0
+	return int(b.PayloadSize)
 }
 
 func (b *UkwnBox) Dump() {
@@ -122,7 +130,7 @@ func (b *UkwnBox) Encode(w io.Writer) error {
 	return nil
 }
 
-type BoxDecoder func(r io.Reader) (Box, error)
+type BoxDecoder func(h BoxHeader, r io.Reader) (Box, error)
 
 // DecodeBox decodes a box
 func DecodeBox(h BoxHeader, r io.Reader) (Box, error) {
@@ -131,7 +139,7 @@ func DecodeBox(h BoxHeader, r io.Reader) (Box, error) {
 		log.Printf("Error while decoding %s : unknown box type", h.Type)
 		d = DecodeUkwnBox
 	}
-	b, err := d(io.LimitReader(r, int64(h.Size-BoxHeaderSize)))
+	b, err := d(h, io.LimitReader(r, int64(h.Size-BoxHeaderSize)))
 	if err != nil {
 		log.Printf("Error while decoding %s : %s", h.Type, err)
 		return nil, err
@@ -147,6 +155,7 @@ func DecodeContainer(r io.Reader) ([]Box, error) {
 		if err == io.EOF {
 			return l, nil
 		}
+		log.Printf("Decode header, %v\n", h)
 		if err != nil {
 			log.Printf("Decode header fail, %s:%v\n", err, h)
 			return l, err

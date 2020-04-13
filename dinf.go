@@ -11,7 +11,7 @@ type DinfBox struct {
 	Dref *DrefBox
 }
 
-func DecodeDinf(r io.Reader) (Box, error) {
+func DecodeDinf(h BoxHeader, r io.Reader) (Box, error) {
 	l, err := DecodeContainer(r)
 	if err != nil {
 		return nil, err

@@ -19,7 +19,7 @@ type StblBox struct {
 	Ctts *CttsBox
 }
 
-func DecodeStbl(r io.Reader) (Box, error) {
+func DecodeStbl(h BoxHeader, r io.Reader) (Box, error) {
 	l, err := DecodeContainer(r)
 	if err != nil {
 		return nil, err

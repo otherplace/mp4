@@ -2,6 +2,7 @@ package mp4
 
 import (
 	"io"
+	"log"
 )
 
 // A MPEG-4 media
@@ -14,21 +15,21 @@ import (
 //
 // Other boxes can also be present (pdin, moof, mfra, free, ...), but are not decoded.
 type MP4 struct {
-	Ftyp *FtypBox
-	//Pdin  *PdinBox
-	Moov *MoovBox
-	//Moof  *MoofBox
-	//Mfra  *MfraBox
-	Mdat *MdatBox
-	Free *FreeBox
-	//Skip  *SkipBox
-	//Meta  *MetaBox
-	//Meco  *MecoBox
-	Styp *StypBox
-	//Sidx  *SidxBox
-	//Ssix  *SSixBox
-	//Prft  *PrftBox
-	boxes []Box
+	Ftyp *FtypBox `json:"ftyp,omitempty"`
+	Styp *StypBox `json:"styp,omitempty"`
+	//Pdin  *PdinBox `json:"pdin,omitempty"`
+	Moov *MoovBox `json:"moov,omitempty"`
+	//Moof  *MoofBox `json:"moof,omitempty"`
+	//Mfra  *MfraBox `json:"mfra,omitempty"`
+	Mdat *MdatBox `json:"mdat,omitempty"`
+	Free *FreeBox `json:"free,omitempty"`
+	//Skip  *SkipBox `json:"skip,omitempty"`
+	//Meta  *MetaBox `json:"meta,omitempty"`
+	//Meco  *MecoBox `json:"meco,omitempty"`
+	Sidx []*SidxBox `json:"sidx,omitempty"`
+	//Ssix  *SSixBox `json:"ssix,omitempty"`
+	//Prft  *PrftBox `json:"prft,omitempty"`
+	boxes []Box `json:",omitempty"`
 }
 
 // Decode decodes a media from a Reader
@@ -50,7 +51,8 @@ func Decode(r io.Reader) (*MP4, error) {
 			v.Moov = b.(*MoovBox)
 		case "mdat":
 			v.Mdat = b.(*MdatBox)
-			v.Mdat.ContentSize = uint32(b.Size() - BoxHeaderSize)
+		case "sidx":
+			v.Sidx = append(v.Sidx, b.(*SidxBox))
 			break
 		}
 		if decoders[b.Type()] != nil {
@@ -60,6 +62,7 @@ func Decode(r io.Reader) (*MP4, error) {
 		u.h.Type = b.Type()
 		u.h.Size = uint32(b.Size())
 		v.boxes = append(v.boxes, u)
+		log.Printf("box appended: %v", u.h)
 	}
 	return v, nil
 }

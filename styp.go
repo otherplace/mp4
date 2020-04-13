@@ -1,9 +1,9 @@
 package mp4
 
 import (
+	"encoding/binary"
 	"fmt"
 	"io"
-	"io/ioutil"
 )
 
 // (styp - mandatory for fMP4)
@@ -11,18 +11,19 @@ import (
 // Status: decoded
 type StypBox struct {
 	MajorBrand       string
-	MinorVersion     []byte
+	MinorVersion     uint32
 	CompatibleBrands []string
 }
 
-func DecodeStyp(r io.Reader) (Box, error) {
-	data, err := ioutil.ReadAll(r)
+func DecodeStyp(h BoxHeader, r io.Reader) (Box, error) {
+	data := make([]byte, h.Size-BoxHeaderSize)
+	_, err := r.Read(data)
 	if err != nil {
 		return nil, err
 	}
 	b := &StypBox{
 		MajorBrand:       string(data[0:4]),
-		MinorVersion:     data[4:8],
+		MinorVersion:     binary.BigEndian.Uint32(data[4:8]),
 		CompatibleBrands: []string{},
 	}
 	if len(data) > 8 {
@@ -44,7 +45,7 @@ func (b *StypBox) Size() int {
 func (b *StypBox) Dump() {
 	fmt.Printf("Box type: %s\n", b.Type())
 	fmt.Printf("+- Major brand: %s\n", b.MajorBrand)
-	fmt.Printf("+- Minor version: %s\n", b.MinorVersion)
+	fmt.Printf("+- Minor version: 0x%x\n", b.MinorVersion)
 	fmt.Printf("+- Compatible brands: sizes = %d\n", len(b.CompatibleBrands))
 	for i, e := range b.CompatibleBrands {
 		fmt.Printf(" +- [%d]\t: %s\n", i, e)
@@ -58,7 +59,7 @@ func (b *StypBox) Encode(w io.Writer) error {
 	}
 	buf := makebuf(b)
 	strtobuf(buf, b.MajorBrand, 4)
-	copy(buf[4:], b.MinorVersion)
+	binary.BigEndian.PutUint32(buf[4:], b.MinorVersion)
 	for i, c := range b.CompatibleBrands {
 		strtobuf(buf[8+i*4:], c, 4)
 	}

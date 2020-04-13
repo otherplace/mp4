@@ -2,7 +2,6 @@ package mp4
 
 import (
 	"io"
-	"io/ioutil"
 )
 
 // Object Descriptor Container Box (iods - optional)
@@ -14,8 +13,9 @@ type IodsBox struct {
 	notDecoded []byte
 }
 
-func DecodeIods(r io.Reader) (Box, error) {
-	data, err := ioutil.ReadAll(r)
+func DecodeIods(h BoxHeader, r io.Reader) (Box, error) {
+	data := make([]byte, h.Size-BoxHeaderSize)
+	_, err := r.Read(data)
 	if err != nil {
 		return nil, err
 	}

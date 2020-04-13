@@ -16,7 +16,7 @@ type MinfBox struct {
 	Boxes []Box
 }
 
-func DecodeMinf(r io.Reader) (Box, error) {
+func DecodeMinf(h BoxHeader, r io.Reader) (Box, error) {
 	l, err := DecodeContainer(r)
 	if err != nil {
 		return nil, err

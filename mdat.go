@@ -14,12 +14,17 @@ type MdatBox struct {
 	r           io.Reader
 }
 
-func DecodeMdat(r io.Reader) (Box, error) {
+func DecodeMdat(h BoxHeader, r io.Reader) (Box, error) {
+	data := make([]byte, h.Size-BoxHeaderSize)
+	n, _ := r.Read(data)
 	// r is a LimitedReader
 	if lr, limited := r.(*io.LimitedReader); limited {
 		r = lr.R
 	}
-	return &MdatBox{r: r}, nil
+	return &MdatBox{
+		r:           r,
+		ContentSize: uint32(n),
+	}, nil
 }
 
 func (b *MdatBox) Type() string {

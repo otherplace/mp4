@@ -3,7 +3,6 @@ package mp4
 import (
 	"encoding/binary"
 	"io"
-	"io/ioutil"
 )
 
 // Video Media Header Box (vhmd - mandatory for video tracks)
@@ -18,8 +17,9 @@ type VmhdBox struct {
 	OpColor      [3]uint16
 }
 
-func DecodeVmhd(r io.Reader) (Box, error) {
-	data, err := ioutil.ReadAll(r)
+func DecodeVmhd(h BoxHeader, r io.Reader) (Box, error) {
+	data := make([]byte, h.Size-BoxHeaderSize)
+	_, err := r.Read(data)
 	if err != nil {
 		return nil, err
 	}

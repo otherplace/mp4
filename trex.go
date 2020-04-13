@@ -4,12 +4,11 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"io/ioutil"
 )
 
 type TrexBox struct {
 	Version                byte
-	Flags                  []byte
+	Flags                  [3]byte
 	TrackId                uint32
 	SampleDescriptionIndex uint32
 	SampleDuration         uint32
@@ -17,14 +16,15 @@ type TrexBox struct {
 	SampleFlags            uint32
 }
 
-func DecodeTrex(r io.Reader) (Box, error) {
-	data, err := ioutil.ReadAll(r)
+func DecodeTrex(h BoxHeader, r io.Reader) (Box, error) {
+	data := make([]byte, h.Size-BoxHeaderSize)
+	_, err := r.Read(data)
 	if err != nil {
 		return nil, err
 	}
 	return &TrexBox{
 		Version:                data[0],
-		Flags:                  []byte{data[1], data[2], data[3]},
+		Flags:                  [3]byte{data[1], data[2], data[3]},
 		TrackId:                binary.BigEndian.Uint32(data[4:8]),
 		SampleDescriptionIndex: binary.BigEndian.Uint32(data[8:12]),
 		SampleDuration:         binary.BigEndian.Uint32(data[12:16]),

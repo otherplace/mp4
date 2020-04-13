@@ -11,15 +11,15 @@ import (
 //
 // Contains all meta-data. To be able to stream a file, the moov box should be placed before the mdat box.
 type MoovBox struct {
-	Mvhd  *MvhdBox
+	Mvhd  *MvhdBox `json:"mvhd"`
 	Iods  *IodsBox
-	Trak  []*TrakBox
-	Udta  *UdtaBox
-	Mvex  *MvexBox
-	Boxes []Box
+	Trak  []*TrakBox `json:"trak"`
+	Udta  *UdtaBox   `json:"moov,omitempty"`
+	Mvex  *MvexBox   `json:"mvex,omitempty"`
+	Boxes []Box      `json:",omitempty"`
 }
 
-func DecodeMoov(r io.Reader) (Box, error) {
+func DecodeMoov(h BoxHeader, r io.Reader) (Box, error) {
 	l, err := DecodeContainer(r)
 	if err != nil {
 		return nil, err
