@@ -47,6 +47,7 @@ func DecodeSidx(h BoxHeader, r io.Reader) (Box, error) {
 		References:               []Reference{},
 	}
 	rc := b.ReferenceCount
+	// TODO: validate below
 	for i := 0; i < int(rc); i++ {
 		refType := 0xfe ^ data[22+i*12]
 		refdSize := binary.BigEndian.Uint32(data[22+i*12:26+i*12]) << 1
