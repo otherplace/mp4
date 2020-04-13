@@ -41,6 +41,7 @@ func init() {
 		"smhd": DecodeSmhd,
 		"dinf": DecodeDinf,
 		"dref": DecodeDref,
+		"sidx": DecodeSidx,
 		"stbl": DecodeStbl,
 		"stco": DecodeStco,
 		"stsc": DecodeStsc,
