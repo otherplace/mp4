@@ -13,7 +13,7 @@ type TrakBox struct {
 	Edts *EdtsBox
 }
 
-func DecodeTrak(r io.Reader) (Box, error) {
+func DecodeTrak(h BoxHeader, r io.Reader) (Box, error) {
 	l, err := DecodeContainer(r)
 	if err != nil {
 		return nil, err

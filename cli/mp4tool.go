@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"time"
@@ -15,15 +16,24 @@ func main() {
 
 	cmd.Command("info", "Displays information about a media", func(cmd *cli.Cmd) {
 		file := cmd.StringArg("FILE", "", "the file to display")
+		isJson := cmd.BoolArg("JSON", false, "display as JSON")
 		cmd.Action = func() {
 			fd, err := os.Open(*file)
 			defer fd.Close()
 			v, err := mp4.Decode(fd)
 			if err != nil {
-				fmt.Println("Decode Error:", err)
-				os.Exit(1)
+				panic(err)
 			}
-			v.Dump()
+			if *isJson {
+				jsonBytes, err := json.Marshal(v)
+				if err != nil {
+					panic(err)
+				}
+				fmt.Println(string(jsonBytes))
+			} else {
+
+				v.Dump()
+			}
 		}
 	})
 

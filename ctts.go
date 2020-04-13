@@ -3,7 +3,6 @@ package mp4
 import (
 	"encoding/binary"
 	"io"
-	"io/ioutil"
 )
 
 // Composition Time to Sample Box (ctts - optional)
@@ -18,8 +17,9 @@ type CttsBox struct {
 	SampleOffset []uint32 // int32 for version 1
 }
 
-func DecodeCtts(r io.Reader) (Box, error) {
-	data, err := ioutil.ReadAll(r)
+func DecodeCtts(h BoxHeader, r io.Reader) (Box, error) {
+	data := make([]byte, h.Size-BoxHeaderSize)
+	_, err := r.Read(data)
 	if err != nil {
 		return nil, err
 	}

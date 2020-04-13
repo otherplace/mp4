@@ -2,7 +2,6 @@ package mp4
 
 import (
 	"io"
-	"io/ioutil"
 )
 
 // File Type Box (ftyp - mandatory)
@@ -12,8 +11,12 @@ type FreeBox struct {
 	notDecoded []byte
 }
 
-func DecodeFree(r io.Reader) (Box, error) {
-	data, err := ioutil.ReadAll(r)
+func DecodeFree(h BoxHeader, r io.Reader) (Box, error) {
+	if h.Size <= BoxHeaderSize {
+		return &FreeBox{nil}, nil
+	}
+	data := make([]byte, h.Size-BoxHeaderSize)
+	_, err := r.Read(data)
 	if err != nil {
 		return nil, err
 	}

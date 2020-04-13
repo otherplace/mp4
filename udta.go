@@ -9,7 +9,7 @@ type UdtaBox struct {
 	Meta *MetaBox
 }
 
-func DecodeUdta(r io.Reader) (Box, error) {
+func DecodeUdta(h BoxHeader, r io.Reader) (Box, error) {
 	l, err := DecodeContainer(r)
 	if err != nil {
 		return nil, err

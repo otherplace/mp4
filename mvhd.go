@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"time"
 )
 
@@ -32,8 +31,9 @@ type MvhdBox struct {
 	notDecoded       []byte
 }
 
-func DecodeMvhd(r io.Reader) (Box, error) {
-	data, err := ioutil.ReadAll(r)
+func DecodeMvhd(h BoxHeader, r io.Reader) (Box, error) {
+	data := make([]byte, h.Size-BoxHeaderSize)
+	_, err := r.Read(data)
 	if err != nil {
 		return nil, err
 	}
