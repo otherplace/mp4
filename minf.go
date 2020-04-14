@@ -9,12 +9,11 @@ import "io"
 // Status: partially decoded
 type MinfBox struct {
 	//Nmhd *NmhdBox `json:"nmhd,"`
-	Vmhd  *VmhdBox `json:"vmhd,"`
-	Smhd  *SmhdBox `json:"smhd,"`
-	Stbl  *StblBox `json:"stbl,"`
-	Dinf  *DinfBox `json:"dinf,"`
-	Hdlr  *HdlrBox // ISO IEC 14496-12, does not contain hdlr in minf
-	Boxes []Box
+	Vmhd *VmhdBox `json:"vmhd,"`
+	Smhd *SmhdBox `json:"smhd,"`
+	Stbl *StblBox `json:"stbl,"`
+	Dinf *DinfBox `json:"dinf,"`
+	Hdlr *HdlrBox // ISO IEC 14496-12, does not contain hdlr in minf
 }
 
 func DecodeMinf(h BoxHeader, r io.Reader) (Box, error) {

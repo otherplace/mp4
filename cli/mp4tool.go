@@ -16,7 +16,8 @@ func main() {
 
 	cmd.Command("info", "Displays information about a media", func(cmd *cli.Cmd) {
 		file := cmd.StringArg("FILE", "", "the file to display")
-		isPlain := cmd.BoolArg("PLAIN", false, "display as plain text or JSON")
+		isPlain := cmd.BoolOpt("t text", false, "display as plain text")
+		isPretty := cmd.BoolOpt("p pretty", false, "Pretty print JSON")
 		cmd.Action = func() {
 			fd, err := os.Open(*file)
 			defer fd.Close()
@@ -24,15 +25,20 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			if !*isPlain {
-				jsonBytes, err := json.MarshalIndent(v, "", "\t")
+			if *isPlain {
+				v.Dump()
+			} else {
+				var jsonBytes []byte
+				if *isPretty {
+					jsonBytes, err = json.MarshalIndent(v, "", "\t")
+				} else {
+					jsonBytes, err = json.Marshal(v)
+				}
 				if err != nil {
 					panic(err)
 				}
 				fmt.Println(string(jsonBytes))
-			} else {
 
-				v.Dump()
 			}
 		}
 	})
