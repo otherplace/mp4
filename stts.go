@@ -46,6 +46,10 @@ func DecodeStts(h BoxHeader, r io.Reader) (Box, error) {
 	return b, nil
 }
 
+func (b *SttsBox) Box() Box {
+	return b
+}
+
 func (b *SttsBox) Type() string {
 	return "stts"
 }

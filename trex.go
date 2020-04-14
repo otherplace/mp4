@@ -33,6 +33,10 @@ func DecodeTrex(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *TrexBox) Box() Box {
+	return b
+}
+
 func (b *TrexBox) Type() string {
 	return "trex"
 }

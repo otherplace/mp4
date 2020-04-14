@@ -29,7 +29,7 @@ func init() {
 		"mvhd": DecodeMvhd,
 		"iods": DecodeIods,
 		"trak": DecodeTrak,
-		"udta": DecodeUdta,
+		//"udta": DecodeUdta,
 		"tkhd": DecodeTkhd,
 		"edts": DecodeEdts,
 		"elst": DecodeElst,
@@ -93,6 +93,7 @@ func EncodeHeader(b Box, w io.Writer) error {
 
 // A box
 type Box interface {
+	Box() Box
 	Type() string
 	Size() int
 	Encode(w io.Writer) error
@@ -105,17 +106,15 @@ type UkwnBox struct {
 }
 
 func DecodeUkwnBox(h BoxHeader, r io.Reader) (Box, error) {
-	var l int64
 	if lr, limited := r.(*io.LimitedReader); limited {
 		r = lr.R
-		l = lr.N
 	}
 	data := make([]byte, h.Size-BoxHeaderSize)
-	_, _ = r.Read(data)
+	n, _ := r.Read(data)
 
 	b := &UkwnBox{
 		Data:        data,
-		PayloadSize: uint32(l),
+		PayloadSize: uint32(n),
 	}
 	return b, nil
 }
@@ -134,6 +133,10 @@ func (b *UkwnBox) Dump() {
 }
 func (b *UkwnBox) Encode(w io.Writer) error {
 	return nil
+}
+
+func (b *UkwnBox) Box() Box {
+	return b
 }
 
 type BoxDecoder func(h BoxHeader, r io.Reader) (Box, error)

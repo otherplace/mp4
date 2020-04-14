@@ -52,6 +52,10 @@ func DecodeTkhd(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *TkhdBox) Box() Box {
+	return b
+}
+
 func (b *TkhdBox) Type() string {
 	return "tkhd"
 }

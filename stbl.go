@@ -46,6 +46,10 @@ func DecodeStbl(h BoxHeader, r io.Reader) (Box, error) {
 	return s, nil
 }
 
+func (b *StblBox) Box() Box {
+	return b
+}
+
 func (b *StblBox) Type() string {
 	return "stbl"
 }

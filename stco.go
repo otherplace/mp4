@@ -41,6 +41,10 @@ func DecodeStco(h BoxHeader, r io.Reader) (Box, error) {
 	return b, nil
 }
 
+func (b *StcoBox) Box() Box {
+	return b
+}
+
 func (b *StcoBox) Type() string {
 	return "stco"
 }

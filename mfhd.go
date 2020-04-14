@@ -16,6 +16,10 @@ type MfhdBox struct {
 	SequenceNumber uint32
 }
 
+func (b *MfhdBox) Box() Box {
+	return b
+}
+
 func (b *MfhdBox) Type() string {
 	return "mfhd"
 }

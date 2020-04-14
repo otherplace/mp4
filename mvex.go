@@ -27,6 +27,10 @@ func DecodeMvex(h BoxHeader, r io.Reader) (Box, error) {
 	return m, err
 }
 
+func (b *MvexBox) Box() Box {
+	return b
+}
+
 func (b *MvexBox) Type() string {
 	return "mvex"
 }

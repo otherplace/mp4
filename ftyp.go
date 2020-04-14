@@ -34,6 +34,10 @@ func DecodeFtyp(h BoxHeader, r io.Reader) (Box, error) {
 	return b, nil
 }
 
+func (b *FtypBox) Box() Box {
+	return b
+}
+
 func (b *FtypBox) Type() string {
 	return "ftyp"
 }

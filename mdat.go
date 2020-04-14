@@ -27,6 +27,10 @@ func DecodeMdat(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *MdatBox) Box() Box {
+	return b
+}
+
 func (b *MdatBox) Type() string {
 	return "mdat"
 }

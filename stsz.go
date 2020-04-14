@@ -46,6 +46,10 @@ func DecodeStsz(h BoxHeader, r io.Reader) (Box, error) {
 	return b, nil
 }
 
+func (b *StszBox) Box() Box {
+	return b
+}
+
 func (b *StszBox) Type() string {
 	return "stsz"
 }

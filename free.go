@@ -23,6 +23,9 @@ func DecodeFree(h BoxHeader, r io.Reader) (Box, error) {
 	return &FreeBox{data}, nil
 }
 
+func (b *FreeBox) Box() Box {
+	return b
+}
 func (b *FreeBox) Type() string {
 	return "free"
 }

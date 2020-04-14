@@ -34,6 +34,10 @@ func DecodeStyp(h BoxHeader, r io.Reader) (Box, error) {
 	return b, nil
 }
 
+func (b *StypBox) Box() Box {
+	return b
+}
+
 func (b *StypBox) Type() string {
 	return "styp"
 }

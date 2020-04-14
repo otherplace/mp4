@@ -67,6 +67,10 @@ func DecodeSidx(h BoxHeader, r io.Reader) (Box, error) {
 	return b, nil
 }
 
+func (b *SidxBox) Box() Box {
+	return b
+}
+
 func (b *SidxBox) Type() string {
 	return "sidx"
 }

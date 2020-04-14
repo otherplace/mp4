@@ -29,6 +29,10 @@ func DecodeMehdBox(r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *MehdBox) Box() Box {
+	return b
+}
+
 func (b *MehdBox) Type() string {
 	return "mehd"
 }

@@ -34,6 +34,10 @@ func DecodeVmhd(h BoxHeader, r io.Reader) (Box, error) {
 	return b, nil
 }
 
+func (b *VmhdBox) Box() Box {
+	return b
+}
+
 func (b *VmhdBox) Type() string {
 	return "vmhd"
 }

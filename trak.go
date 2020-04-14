@@ -29,11 +29,15 @@ func DecodeTrak(h BoxHeader, r io.Reader) (Box, error) {
 			t.Mdia = b.(*MdiaBox)
 		case "edts":
 			t.Edts = b.(*EdtsBox)
-		default:
-			return nil, ErrBadFormat
+			//default:
+			//return nil, ErrBadFormat
 		}
 	}
 	return t, nil
+}
+
+func (b *TrakBox) Box() Box {
+	return b
 }
 
 func (b *TrakBox) Type() string {

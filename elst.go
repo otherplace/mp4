@@ -46,6 +46,9 @@ func DecodeElst(h BoxHeader, r io.Reader) (Box, error) {
 	return b, nil
 }
 
+func (b *ElstBox) Box() Box {
+	return b
+}
 func (b *ElstBox) Type() string {
 	return "elst"
 }

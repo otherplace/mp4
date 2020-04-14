@@ -52,6 +52,10 @@ func DecodeStsc(h BoxHeader, r io.Reader) (Box, error) {
 	return b, nil
 }
 
+func (b *StscBox) Box() Box {
+	return b
+}
+
 func (b *StscBox) Type() string {
 	return "stsc"
 }
