@@ -24,6 +24,7 @@ func init() {
 	decoders = map[string]BoxDecoder{
 		"ftyp": DecodeFtyp,
 		"styp": DecodeStyp,
+		"moof": DecodeMoof,
 		"moov": DecodeMoov,
 		"mvhd": DecodeMvhd,
 		"iods": DecodeIods,
@@ -35,6 +36,7 @@ func init() {
 		"mdia": DecodeMdia,
 		"minf": DecodeMinf,
 		"mdhd": DecodeMdhd,
+		"mfhd": DecodeMfhd,
 		"mvex": DecodeMvex,
 		"hdlr": DecodeHdlr,
 		"vmhd": DecodeVmhd,
@@ -50,7 +52,11 @@ func init() {
 		"stsd": DecodeStsd,
 		"stts": DecodeStts,
 		"stss": DecodeStss,
+		"traf": DecodeTraf,
+		"tfdt": DecodeTfdt,
+		"tfhd": DecodeTfhd,
 		"trex": DecodeTrex,
+		"trun": DecodeTrun,
 		"meta": DecodeMeta,
 		"mdat": DecodeMdat,
 		"free": DecodeFree,
@@ -124,7 +130,7 @@ func (b *UkwnBox) Size() int {
 
 func (b *UkwnBox) Dump() {
 	fmt.Printf("Box type: %s\n", b.Type())
-	fmt.Printf("Data length: %d\n", len(b.Data))
+	fmt.Printf(" Data length: %d\n", len(b.Data))
 }
 func (b *UkwnBox) Encode(w io.Writer) error {
 	return nil
@@ -210,4 +216,20 @@ func strtobuf(out []byte, str string, l int) {
 
 func makebuf(b Box) []byte {
 	return make([]byte, b.Size()-BoxHeaderSize)
+}
+
+// utilities
+func BEUint28(b []byte) uint32 {
+	_ = b[2]
+	return uint32(b[2]) | uint32(b[1])<<8 | uint32(b[0])<<16
+}
+func BEPutUint28(b []byte, v uint32) {
+	_ = b[2] // early bounds check to guarantee safety of writes below
+	b[0] = byte(v >> 16)
+	b[1] = byte(v >> 8)
+	b[2] = byte(v)
+}
+
+func compareFlag(flag uint32, bitmask uint32) bool {
+	return flag&bitmask == bitmask
 }

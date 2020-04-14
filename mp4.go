@@ -2,7 +2,6 @@ package mp4
 
 import (
 	"io"
-	"log"
 )
 
 // A MPEG-4 media
@@ -18,18 +17,19 @@ type MP4 struct {
 	Ftyp *FtypBox `json:"ftyp,omitempty"`
 	Styp *StypBox `json:"styp,omitempty"`
 	//Pdin  *PdinBox `json:"pdin,omitempty"`
-	Moov *MoovBox `json:"moov,omitempty"`
-	//Moof  *MoofBox `json:"moof,omitempty"`
+	Moov *MoovBox   `json:"moov,omitempty"`
+	Moof []*MoofBox `json:"moof,omitempty"`
 	//Mfra  *MfraBox `json:"mfra,omitempty"`
-	Mdat *MdatBox `json:"mdat,omitempty"`
-	Free *FreeBox `json:"free,omitempty"`
-	//Skip  *SkipBox `json:"skip,omitempty"`
-	//Meta  *MetaBox `json:"meta,omitempty"`
-	//Meco  *MecoBox `json:"meco,omitempty"`
+	Mdat *MdatBox   `json:"mdat,omitempty"`
+	Free []*FreeBox `json:"free,omitempty"`
+	//Skip  []*SkipBox `json:"skip,omitempty"`
 	Sidx []*SidxBox `json:"sidx,omitempty"`
-	//Ssix  *SSixBox `json:"ssix,omitempty"`
-	//Prft  *PrftBox `json:"prft,omitempty"`
-	boxes []Box `json:",omitempty"`
+	//Ssix  []*SSixBox `json:"ssix,omitempty"`
+	//Prft  []*PrftBox `json:"prft,omitempty"`
+	//Mfra  *MfraBox `json:"mfra,omitempty"`
+	Meta *MetaBox `json:"meta,omitempty"`
+	//Meco  *MetaBox `json:"meco,omitempty"`
+	boxes []Box `json:"unkn,omitempty"`
 }
 
 // Decode decodes a media from a Reader
@@ -47,22 +47,19 @@ func Decode(r io.Reader) (*MP4, error) {
 			v.Ftyp = b.(*FtypBox)
 		case "styp":
 			v.Styp = b.(*StypBox)
+		case "meta":
+			v.Meta = b.(*MetaBox)
+		case "moof":
+			v.Moof = append(v.Moof, b.(*MoofBox))
 		case "moov":
 			v.Moov = b.(*MoovBox)
 		case "mdat":
 			v.Mdat = b.(*MdatBox)
 		case "sidx":
 			v.Sidx = append(v.Sidx, b.(*SidxBox))
-			break
+		default:
+			v.boxes = append(v.boxes, b.(*UkwnBox))
 		}
-		if decoders[b.Type()] != nil {
-			continue
-		}
-		u := b.(*UkwnBox)
-		u.h.Type = b.Type()
-		u.h.Size = uint32(b.Size())
-		v.boxes = append(v.boxes, u)
-		log.Printf("box appended: %v", u.h)
 	}
 	return v, nil
 }

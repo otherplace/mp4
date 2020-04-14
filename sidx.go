@@ -80,6 +80,6 @@ func (b *SidxBox) Dump() {
 }
 
 func (b *SidxBox) Encode(w io.Writer) error {
-
+	// TODO: encode
 	return nil
 }

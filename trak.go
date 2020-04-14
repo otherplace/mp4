@@ -8,9 +8,11 @@ import "io"
 //
 // A media file can contain one or more tracks.
 type TrakBox struct {
-	Tkhd *TkhdBox
-	Mdia *MdiaBox
-	Edts *EdtsBox
+	Tkhd *TkhdBox `json:"tkhd,"`
+	//Tref *TrefBox `json:"tref,omitempty"`
+	//Trgr *TrgrBox `json"trgr,omitempty"`
+	Mdia *MdiaBox `json:"mdia,"`
+	Edts *EdtsBox `json:"edts,omitempty"`
 }
 
 func DecodeTrak(h BoxHeader, r io.Reader) (Box, error) {

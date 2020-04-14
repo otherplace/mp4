@@ -6,13 +6,14 @@ import "io"
 //
 // Contained in : Media Box (mdia)
 //
-// Status: partially decoded (hmhd - hint tracks - and nmhd - null media - are ignored)
+// Status: partially decoded
 type MinfBox struct {
-	Vmhd  *VmhdBox
-	Smhd  *SmhdBox
-	Stbl  *StblBox
-	Dinf  *DinfBox
-	Hdlr  *HdlrBox
+	//Nmhd *NmhdBox `json:"nmhd,"`
+	Vmhd  *VmhdBox `json:"vmhd,"`
+	Smhd  *SmhdBox `json:"smhd,"`
+	Stbl  *StblBox `json:"stbl,"`
+	Dinf  *DinfBox `json:"dinf,"`
+	Hdlr  *HdlrBox // ISO IEC 14496-12, does not contain hdlr in minf
 	Boxes []Box
 }
 

@@ -11,11 +11,11 @@ import (
 //
 // Contains all meta-data. To be able to stream a file, the moov box should be placed before the mdat box.
 type MoovBox struct {
-	Mvhd  *MvhdBox `json:"mvhd"`
-	Iods  *IodsBox
+	Mvhd  *MvhdBox   `json:"mvhd"`
+	Iods  *IodsBox   // ISO IEC 13396-12, does not contain this box in moov box
 	Trak  []*TrakBox `json:"trak"`
-	Udta  *UdtaBox   `json:"moov,omitempty"`
 	Mvex  *MvexBox   `json:"mvex,omitempty"`
+	Udta  *UdtaBox   `json:"udta,omitempty"`
 	Boxes []Box      `json:",omitempty"`
 }
 
