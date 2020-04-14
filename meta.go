@@ -26,6 +26,10 @@ func DecodeMeta(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *MetaBox) Box() Box {
+	return b
+}
+
 func (b *MetaBox) Type() string {
 	return "meta"
 }

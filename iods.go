@@ -24,6 +24,9 @@ func DecodeIods(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *IodsBox) Box() Box {
+	return b
+}
 func (b *IodsBox) Type() string {
 	return "iods"
 }

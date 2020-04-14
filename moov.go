@@ -42,6 +42,10 @@ func DecodeMoov(h BoxHeader, r io.Reader) (Box, error) {
 	return m, err
 }
 
+func (b *MoovBox) Box() Box {
+	return b
+}
+
 func (b *MoovBox) Type() string {
 	return "moov"
 }

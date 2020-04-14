@@ -21,6 +21,10 @@ type TrafBox struct {
 	Meta *MetaBox `json:"meta,omitempty"`
 }
 
+func (b *TrafBox) Box() Box {
+	return b
+}
+
 func (b *TrafBox) Type() string {
 	return "traf"
 }

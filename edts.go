@@ -30,6 +30,9 @@ func DecodeEdts(h BoxHeader, r io.Reader) (Box, error) {
 	return e, nil
 }
 
+func (b *EdtsBox) Box() Box {
+	return b
+}
 func (b *EdtsBox) Type() string {
 	return "edts"
 }

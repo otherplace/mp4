@@ -10,7 +10,7 @@ type UdtaBox struct {
 	//Tsel *TselBox `json:"tsel,omitempty"`
 	//Kind []*KindBox `json:"kind,omitempty"` // udta in a track
 	//Strk []*StrkBox `json:"strk,omitempry"` // udts of trak
-	Meta *MetaBox `json:"meta,"` // ISO IEC 14496-12, does not contain meta in udta
+	Meta *MetaBox `json:"meta,omitempty"` // ISO IEC 14496-12, does not contain meta in udta
 }
 
 func DecodeUdta(h BoxHeader, r io.Reader) (Box, error) {
@@ -23,11 +23,13 @@ func DecodeUdta(h BoxHeader, r io.Reader) (Box, error) {
 		switch b.Type() {
 		case "meta":
 			u.Meta = b.(*MetaBox)
-		default:
-			return nil, ErrBadFormat
 		}
 	}
 	return u, nil
+}
+
+func (b *UdtaBox) Box() Box {
+	return b
 }
 
 func (b *UdtaBox) Type() string {
@@ -35,7 +37,11 @@ func (b *UdtaBox) Type() string {
 }
 
 func (b *UdtaBox) Size() int {
-	return BoxHeaderSize + b.Meta.Size()
+	l := BoxHeaderSize
+	if b.Meta != nil {
+		l = l + b.Meta.Size()
+	}
+	return l
 }
 
 func (b *UdtaBox) Encode(w io.Writer) error {

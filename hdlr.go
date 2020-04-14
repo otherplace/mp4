@@ -37,6 +37,10 @@ func DecodeHdlr(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *HdlrBox) Box() Box {
+	return b
+}
+
 func (b *HdlrBox) Type() string {
 	return "hdlr"
 }

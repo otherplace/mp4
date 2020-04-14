@@ -29,6 +29,10 @@ func DecodeSmhd(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *SmhdBox) Box() Box {
+	return b
+}
+
 func (b *SmhdBox) Type() string {
 	return "smhd"
 }

@@ -35,6 +35,10 @@ type TrunBox struct {
 	Samples          []*Sample
 }
 
+func (b *TrunBox) Box() Box {
+	return b
+}
+
 func (b *TrunBox) Type() string {
 	return "trun"
 }

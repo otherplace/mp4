@@ -16,6 +16,10 @@ type TfdtBox struct {
 	BaseMediaDecodeTime uint32
 }
 
+func (b *TfdtBox) Box() Box {
+	return b
+}
+
 func (b *TfdtBox) Type() string {
 	return "tfdt"
 }

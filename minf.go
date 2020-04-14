@@ -40,6 +40,10 @@ func DecodeMinf(h BoxHeader, r io.Reader) (Box, error) {
 	return m, nil
 }
 
+func (b *MinfBox) Box() Box {
+	return b
+}
+
 func (b *MinfBox) Type() string {
 	return "minf"
 }

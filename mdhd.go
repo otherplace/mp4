@@ -42,6 +42,10 @@ func DecodeMdhd(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *MdhdBox) Box() Box {
+	return b
+}
+
 func (b *MdhdBox) Type() string {
 	return "mdhd"
 }

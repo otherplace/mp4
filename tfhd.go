@@ -33,6 +33,10 @@ const (
 	DefaultBaseIsMoof             = 0x020000
 )
 
+func (b *TfhdBox) Box() Box {
+	return b
+}
+
 func (b *TfhdBox) Type() string {
 	return "tfhd"
 }

@@ -30,11 +30,13 @@ func DecodeMdia(h BoxHeader, r io.Reader) (Box, error) {
 			m.Hdlr = b.(*HdlrBox)
 		case "minf":
 			m.Minf = b.(*MinfBox)
-		default:
-			return nil, ErrBadFormat
 		}
 	}
 	return m, nil
+}
+
+func (b *MdiaBox) Box() Box {
+	return b
 }
 
 func (b *MdiaBox) Type() string {

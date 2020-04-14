@@ -31,6 +31,9 @@ func DecodeDref(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *DrefBox) Box() Box {
+	return b
+}
 func (b *DrefBox) Type() string {
 	return "dref"
 }

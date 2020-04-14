@@ -28,6 +28,9 @@ func DecodeDinf(h BoxHeader, r io.Reader) (Box, error) {
 	return d, nil
 }
 
+func (b *DinfBox) Box() Box {
+	return b
+}
 func (b *DinfBox) Type() string {
 	return "dinf"
 }

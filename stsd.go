@@ -30,6 +30,10 @@ func DecodeStsd(h BoxHeader, r io.Reader) (Box, error) {
 	}, nil
 }
 
+func (b *StsdBox) Box() Box {
+	return b
+}
+
 func (b *StsdBox) Type() string {
 	return "stsd"
 }

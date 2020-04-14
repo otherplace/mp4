@@ -14,6 +14,10 @@ type MoofBox struct {
 	Traf []*TrafBox `json:"traf,omitempty"`
 }
 
+func (b *MoofBox) Box() Box {
+	return b
+}
+
 func (b *MoofBox) Type() string {
 	return "moof"
 }

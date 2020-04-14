@@ -58,7 +58,11 @@ func Decode(r io.Reader) (*MP4, error) {
 		case "sidx":
 			v.Sidx = append(v.Sidx, b.(*SidxBox))
 		default:
-			v.boxes = append(v.boxes, b.(*UkwnBox))
+			if decoders[b.Type()] != nil {
+				v.boxes = append(v.boxes, b.Box())
+			} else {
+				v.boxes = append(v.boxes, b.(*UkwnBox))
+			}
 		}
 	}
 	return v, nil
