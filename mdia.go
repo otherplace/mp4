@@ -10,9 +10,10 @@ import "io"
 //
 // Contains all information about the media data.
 type MdiaBox struct {
-	Mdhd *MdhdBox
-	Hdlr *HdlrBox
-	Minf *MinfBox
+	Mdhd *MdhdBox `json:"mdhd,"`
+	Hdlr *HdlrBox `json:"hdlr,"`
+	Minf *MinfBox `json:"minf,"`
+	//Elng *ElngBox `json:"elng,omitempty"`
 }
 
 func DecodeMdia(h BoxHeader, r io.Reader) (Box, error) {

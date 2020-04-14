@@ -6,7 +6,11 @@ import "io"
 //
 // Contained in: Movie Box (moov) or Track Box (trak)
 type UdtaBox struct {
-	Meta *MetaBox
+	//Cprt []*CprtBox `json:"cprt,omitempty"`
+	//Tsel *TselBox `json:"tsel,omitempty"`
+	//Kind []*KindBox `json:"kind,omitempty"` // udta in a track
+	//Strk []*StrkBox `json:"strk,omitempry"` // udts of trak
+	Meta *MetaBox `json:"meta,"` // ISO IEC 14496-12, does not contain meta in udta
 }
 
 func DecodeUdta(h BoxHeader, r io.Reader) (Box, error) {

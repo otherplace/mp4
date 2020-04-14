@@ -10,7 +10,7 @@ import "io"
 //
 // The edit box maps the presentation timeline to the media-time line
 type EdtsBox struct {
-	Elst *ElstBox
+	Elst *ElstBox `json:"elst,omitempty"`
 }
 
 func DecodeEdts(h BoxHeader, r io.Reader) (Box, error) {
