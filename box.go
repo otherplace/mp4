@@ -15,6 +15,7 @@ const (
 var (
 	ErrUnknownBoxType  = errors.New("unknown box type")
 	ErrTruncatedHeader = errors.New("truncated header")
+	ErrTruncatedBody   = errors.New("truncated body")
 	ErrBadFormat       = errors.New("bad format")
 )
 
@@ -22,6 +23,7 @@ var decoders map[string]BoxDecoder
 
 func init() {
 	decoders = map[string]BoxDecoder{
+		"cprt": DecodeCprt,
 		"ftyp": DecodeFtyp,
 		"styp": DecodeStyp,
 		"moof": DecodeMoof,
@@ -43,6 +45,7 @@ func init() {
 		"smhd": DecodeSmhd,
 		"dinf": DecodeDinf,
 		"dref": DecodeDref,
+		"pdin": DecodePdin,
 		"sidx": DecodeSidx,
 		"stbl": DecodeStbl,
 		"stco": DecodeStco,
@@ -145,12 +148,12 @@ type BoxDecoder func(h BoxHeader, r io.Reader) (Box, error)
 func DecodeBox(h BoxHeader, r io.Reader) (Box, error) {
 	d := decoders[h.Type]
 	if d == nil {
-		log.Printf("Error while decoding %s : unknown box type", h.Type)
+		log.Printf("Error while decoding %s: unknown box type, len: %d", h.Type, h.Size)
 		d = DecodeUkwnBox
 	}
 	b, err := d(h, io.LimitReader(r, int64(h.Size-BoxHeaderSize)))
 	if err != nil {
-		log.Printf("Error while decoding %s : %s", h.Type, err)
+		log.Printf("Error while decoding %v:%s", h, err)
 		return nil, err
 	}
 	return b, nil
@@ -174,6 +177,7 @@ func DecodeContainer(r io.Reader) ([]Box, error) {
 			log.Printf("Decode Box fail, %s:%v\n", err, h)
 			return l, err
 		}
+		log.Printf("Decode box, %v\n", h)
 		l = append(l, b)
 	}
 }

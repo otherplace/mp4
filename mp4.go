@@ -12,7 +12,7 @@ import (
 //   moov : the movie box (meta-data)
 //   mdat : the media data (chunks and samples)
 //
-// Other boxes can also be present (pdin, moof, mfra, free, ...), but are not decoded.
+// Other boxes can also be present (pdin, moof, mfra, free, ...)
 type MP4 struct {
 	Ftyp *FtypBox `json:"ftyp,omitempty"`
 	Styp *StypBox `json:"styp,omitempty"`
@@ -23,6 +23,7 @@ type MP4 struct {
 	Mdat *MdatBox   `json:"mdat,omitempty"`
 	Free []*FreeBox `json:"free,omitempty"`
 	//Skip  []*SkipBox `json:"skip,omitempty"`
+	Udta *UdtaBox   `json:"udta,omitempty"`
 	Sidx []*SidxBox `json:"sidx,omitempty"`
 	//Ssix  []*SSixBox `json:"ssix,omitempty"`
 	//Prft  []*PrftBox `json:"prft,omitempty"`
@@ -57,6 +58,10 @@ func Decode(r io.Reader) (*MP4, error) {
 			v.Mdat = b.(*MdatBox)
 		case "sidx":
 			v.Sidx = append(v.Sidx, b.(*SidxBox))
+		case "free":
+			v.Free = append(v.Free, b.(*FreeBox))
+		case "udta":
+			v.Udta = b.(*UdtaBox)
 		default:
 			if decoders[b.Type()] != nil {
 				v.boxes = append(v.boxes, b.Box())
