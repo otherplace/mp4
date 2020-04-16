@@ -2,6 +2,7 @@ package mp4
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 )
 
@@ -62,4 +63,11 @@ func (b *HdlrBox) Encode(w io.Writer) error {
 	strtobuf(buf[24:], b.Name, len(b.Name))
 	_, err = w.Write(buf)
 	return err
+}
+
+func (b *HdlrBox) Dump() {
+	fmt.Printf("Handler Reference Box\n")
+	fmt.Printf("+- PreDefined: %d\n", b.PreDefined)
+	fmt.Printf("+- HandlerType: %s\n", b.HandlerType)
+	fmt.Printf("+- Name: %s\n", b.Name)
 }

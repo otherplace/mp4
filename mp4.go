@@ -84,12 +84,23 @@ func (m *MP4) Dump() {
 	if m.Moov != nil {
 		m.Moov.Dump()
 	}
+	for _, f := range m.Moof {
+		f.Dump()
+	}
+	if m.Meta != nil {
+		m.Meta.Dump()
+	}
+	if m.Mdat != nil {
+		m.Mdat.Dump()
+	}
+	for _, s := range m.Sidx {
+		s.Dump()
+	}
+	for _, f := range m.Moof {
+		f.Dump()
+	}
 	for _, b := range m.boxes {
-		if b != nil {
-			ukwn := b.(*UkwnBox)
-			ukwn.Dump()
-
-		}
+		b.Dump()
 	}
 }
 

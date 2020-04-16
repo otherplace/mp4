@@ -2,6 +2,7 @@ package mp4
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 )
 
@@ -60,4 +61,12 @@ func (b *VmhdBox) Encode(w io.Writer) error {
 	}
 	_, err = w.Write(buf)
 	return err
+}
+
+func (b *VmhdBox) Dump() {
+	fmt.Printf("Video Media Header Box\n")
+	fmt.Printf("+- Version: %d\n", b.Version)
+	fmt.Printf("+- Flags: %v\n", b.Flags)
+	fmt.Printf("+- GraphicsMode: %d\n", b.GraphicsMode)
+	fmt.Printf("+- OpColor: %v\n", b.OpColor)
 }

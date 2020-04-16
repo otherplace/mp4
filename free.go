@@ -1,6 +1,7 @@
 package mp4
 
 import (
+	"fmt"
 	"io"
 )
 
@@ -41,4 +42,8 @@ func (b *FreeBox) Encode(w io.Writer) error {
 	}
 	_, err = w.Write(b.notDecoded)
 	return err
+}
+
+func (b *FreeBox) Dump() {
+	fmt.Printf("Free Space Box\n")
 }

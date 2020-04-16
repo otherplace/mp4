@@ -10,8 +10,9 @@ import (
 // Mandatory:	No
 // Quantity:	 Zero	or	more
 type MoofBox struct {
-	Mfhd *MfhdBox   `json:"mfhd,"`
-	Traf []*TrafBox `json:"traf,omitempty"`
+	Mfhd  *MfhdBox   `json:"mfhd,"`
+	Traf  []*TrafBox `json:"traf,omitempty"`
+	Boxes []Box
 }
 
 func (b *MoofBox) Box() Box {
@@ -34,10 +35,27 @@ func (b *MoofBox) Encode(w io.Writer) error {
 	if err != nil {
 		return err
 	}
+	err = b.Mfhd.Encode(w)
+	if err != nil {
+		return err
+	}
+
+	if b.Traf != nil {
+		for _, t := range b.Traf {
+			err := t.Encode(w)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return err
 }
 func (b *MoofBox) Dump() {
 	fmt.Printf("Movie Fragment Box\n")
+	b.Mfhd.Dump()
+	for _, t := range b.Traf {
+		t.Dump()
+	}
 }
 
 func DecodeMoof(h BoxHeader, r io.Reader) (Box, error) {
@@ -52,6 +70,8 @@ func DecodeMoof(h BoxHeader, r io.Reader) (Box, error) {
 			m.Mfhd = b.(*MfhdBox)
 		case "traf":
 			m.Traf = append(m.Traf, b.(*TrafBox))
+		default:
+			m.Boxes = append(m.Boxes, b.Box())
 		}
 	}
 	return m, err

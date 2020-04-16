@@ -1,29 +1,48 @@
 package mp4
 
 import (
+	"fmt"
 	"io"
 )
 
-// Meta Box (meta - optional)
-//
-// Status: not decoded
+// Box	Type:	 ‘meta’
+// Container:	 File,	Movie	Box	(‘moov’),	Track	Box	(‘trak’),
+//	 Additional	Metadata	Container	Box	(‘meco’),
+//	 Movie	Fragment	Box	(‘moof’)	or	Track	Fragment	Box	(‘traf’)
+// Mandatory:	No
+// Quantity:	 Zero	or	one	(in	File,	‘moov’,	and	‘trak’),	One	or	more	(in	‘meco’)
 type MetaBox struct {
-	Version    byte
-	Flags      [3]byte
-	notDecoded []byte
+	Hdlr *HdlrBox `json:"hdlr,"`
+	Bxml *BxmlBox `json:"bxml,omitempty"`
+	Dinf *DinfBox `json:"dinf,omitempty"`
+	Iloc *IlocBox `json:"iloc,omitempty"`
+	//Pitm *PitmBox `json:"pitm,omitempty"`
+	//Ipro *IproBox `json:"ipro,omitempty
+	//Iinf *IinfBox `json:"iinf,omitempty"`
+	Boxes []Box
 }
 
 func DecodeMeta(h BoxHeader, r io.Reader) (Box, error) {
-	data := make([]byte, h.Size-BoxHeaderSize)
-	_, err := r.Read(data)
+	l, err := DecodeContainer(r)
 	if err != nil {
 		return nil, err
 	}
-	return &MetaBox{
-		Version:    data[0],
-		Flags:      [3]byte{data[1], data[2], data[3]},
-		notDecoded: data[4:],
-	}, nil
+	m := &MetaBox{}
+	for _, b := range l {
+		switch b.Type() {
+		case "hdlr":
+			m.Hdlr = b.(*HdlrBox)
+		case "dinf":
+			m.Dinf = b.(*DinfBox)
+		case "bxml":
+			m.Bxml = b.(*BxmlBox)
+		case "iloc":
+			m.Iloc = b.(*IlocBox)
+		default:
+			m.Boxes = append(m.Boxes, b.Box())
+		}
+	}
+	return m, err
 }
 
 func (b *MetaBox) Box() Box {
@@ -35,7 +54,14 @@ func (b *MetaBox) Type() string {
 }
 
 func (b *MetaBox) Size() int {
-	return BoxHeaderSize + 4 + len(b.notDecoded)
+	l := BoxHeaderSize
+	if b.Hdlr != nil {
+		l += b.Hdlr.Size()
+	}
+	if b.Dinf != nil {
+		l += b.Dinf.Size()
+	}
+	return l
 }
 
 func (b *MetaBox) Encode(w io.Writer) error {
@@ -43,10 +69,27 @@ func (b *MetaBox) Encode(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	buf := makebuf(b)
-	buf[0] = b.Version
-	buf[1], buf[2], buf[3] = b.Flags[0], b.Flags[1], b.Flags[2]
-	copy(buf[4:], b.notDecoded)
-	_, err = w.Write(buf)
+	if b.Hdlr != nil {
+		err = b.Encode(w)
+		if err != nil {
+			return err
+		}
+	}
+	if b.Dinf != nil {
+		err = b.Encode(w)
+		if err != nil {
+			return err
+		}
+	}
 	return err
+}
+
+func (b *MetaBox) Dump() {
+	fmt.Printf("Meta Box\n")
+	if b.Hdlr != nil {
+		b.Hdlr.Dump()
+	}
+	if b.Dinf != nil {
+		b.Dinf.Dump()
+	}
 }

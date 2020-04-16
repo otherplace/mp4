@@ -2,6 +2,7 @@ package mp4
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 )
 
@@ -52,4 +53,11 @@ func (b *SmhdBox) Encode(w io.Writer) error {
 	binary.BigEndian.PutUint16(buf[4:], b.Balance)
 	_, err = w.Write(buf)
 	return err
+}
+
+func (b *SmhdBox) Dump() {
+	fmt.Printf("Sound Media Header Box\n")
+	fmt.Printf("+- Version: %d\n", b.Version)
+	fmt.Printf("+- Flags: %v\n", b.Flags)
+	fmt.Printf("+- Balance: %v\n", b.Balance)
 }

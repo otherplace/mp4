@@ -16,6 +16,7 @@ type MoovBox struct {
 	Trak  []*TrakBox `json:"trak"`
 	Mvex  *MvexBox   `json:"mvex,omitempty"`
 	Udta  *UdtaBox   `json:"udta,omitempty"`
+	Meta  *MetaBox   `json:"meta,omitempty"`
 	Boxes []Box      `json:",omitempty"`
 }
 
@@ -33,10 +34,14 @@ func DecodeMoov(h BoxHeader, r io.Reader) (Box, error) {
 			m.Iods = b.(*IodsBox)
 		case "trak":
 			m.Trak = append(m.Trak, b.(*TrakBox))
-		case "udta":
-			m.Udta = b.(*UdtaBox)
+		//case "udta":
+		//	m.Udta = b.(*UdtaBox)
 		case "mvex":
 			m.Mvex = b.(*MvexBox)
+		case "meta":
+			m.Meta = b.(*MetaBox)
+		default:
+			m.Boxes = append(m.Boxes, b.Box())
 		}
 	}
 	return m, err
@@ -60,6 +65,12 @@ func (b *MoovBox) Size() int {
 	}
 	if b.Udta != nil {
 		sz += b.Udta.Size()
+	}
+	if b.Mvex != nil {
+		sz += b.Mvex.Size()
+	}
+	if b.Meta != nil {
+		sz += b.Meta.Size()
 	}
 	return sz + BoxHeaderSize
 }
@@ -97,7 +108,23 @@ func (b *MoovBox) Encode(w io.Writer) error {
 		}
 	}
 	if b.Udta != nil {
-		return b.Udta.Encode(w)
+		err = b.Udta.Encode(w)
+		if err != nil {
+			return err
+		}
 	}
+	if b.Mvex != nil {
+		err = b.Mvex.Encode(w)
+		if err != nil {
+			return err
+		}
+	}
+	if b.Meta != nil {
+		err = b.Meta.Encode(w)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

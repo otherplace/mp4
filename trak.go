@@ -11,8 +11,10 @@ type TrakBox struct {
 	Tkhd *TkhdBox `json:"tkhd,"`
 	//Tref *TrefBox `json:"tref,omitempty"`
 	//Trgr *TrgrBox `json"trgr,omitempty"`
-	Mdia *MdiaBox `json:"mdia,"`
-	Edts *EdtsBox `json:"edts,omitempty"`
+	Mdia  *MdiaBox `json:"mdia,"`
+	Edts  *EdtsBox `json:"edts,omitempty"`
+	Meta  *MetaBox `json:"meta,omitempty"`
+	Boxes []Box
 }
 
 func DecodeTrak(h BoxHeader, r io.Reader) (Box, error) {
@@ -29,8 +31,10 @@ func DecodeTrak(h BoxHeader, r io.Reader) (Box, error) {
 			t.Mdia = b.(*MdiaBox)
 		case "edts":
 			t.Edts = b.(*EdtsBox)
-			//default:
-			//return nil, ErrBadFormat
+		case "meta":
+			t.Meta = b.(*MetaBox)
+		default:
+			t.Boxes = append(t.Boxes, b.Box())
 		}
 	}
 	return t, nil
@@ -50,6 +54,9 @@ func (b *TrakBox) Size() int {
 	if b.Edts != nil {
 		sz += b.Edts.Size()
 	}
+	if b.Meta != nil {
+		sz += b.Meta.Size()
+	}
 	return sz + BoxHeaderSize
 }
 
@@ -59,6 +66,9 @@ func (b *TrakBox) Dump() {
 		b.Edts.Dump()
 	}
 	b.Mdia.Dump()
+	if b.Meta != nil {
+		b.Meta.Dump()
+	}
 }
 
 func (b *TrakBox) Encode(w io.Writer) error {
@@ -75,6 +85,9 @@ func (b *TrakBox) Encode(w io.Writer) error {
 		if err != nil {
 			return err
 		}
+	}
+	if b.Meta != nil {
+		b.Meta.Encode(w)
 	}
 	return b.Mdia.Encode(w)
 }

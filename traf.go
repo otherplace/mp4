@@ -17,8 +17,9 @@ type TrafBox struct {
 	//Subs *SubsBox `json:"subs,omitempty"`
 	//Saiz *SaizBox `json:"saiz,omitempty"`
 	//Saiz *SaioBox `json:"saio,omitempty"`
-	Tfdt *TfdtBox `json:"tfdt,omitempty"`
-	Meta *MetaBox `json:"meta,omitempty"`
+	Tfdt  *TfdtBox `json:"tfdt,omitempty"`
+	Meta  *MetaBox `json:"meta,omitempty"`
+	Boxes []Box
 }
 
 func (b *TrafBox) Box() Box {
@@ -42,6 +43,18 @@ func (b *TrafBox) Encode(w io.Writer) error {
 }
 func (b *TrafBox) Dump() {
 	fmt.Printf("Track Fragment Box\n")
+	if b.Tfhd != nil {
+		b.Tfhd.Dump()
+	}
+	for _, t := range b.Trun {
+		t.Dump()
+	}
+	if b.Tfdt != nil {
+		b.Tfdt.Dump()
+	}
+	if b.Meta != nil {
+		b.Meta.Dump()
+	}
 }
 
 func DecodeTraf(h BoxHeader, r io.Reader) (Box, error) {
@@ -60,7 +73,8 @@ func DecodeTraf(h BoxHeader, r io.Reader) (Box, error) {
 			t.Trun = append(t.Trun, b.(*TrunBox))
 		case "meta":
 			t.Meta = b.(*MetaBox)
-
+		default:
+			t.Boxes = append(t.Boxes, b.Box())
 		}
 	}
 	return t, err

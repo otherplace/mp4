@@ -1,6 +1,7 @@
 package mp4
 
 import (
+	"fmt"
 	"io"
 )
 
@@ -33,7 +34,7 @@ func (b *CprtBox) Box() Box {
 }
 
 func (b *CprtBox) Type() string {
-	return "meta"
+	return "cprt"
 }
 
 func (b *CprtBox) Size() int {
@@ -51,4 +52,8 @@ func (b *CprtBox) Encode(w io.Writer) error {
 	copy(buf[4:], b.notDecoded)
 	_, err = w.Write(buf)
 	return err
+}
+func (b *CprtBox) Dump() {
+	fmt.Printf("Copyright Box\n")
+	fmt.Printf(" %s\n", string(b.notDecoded))
 }

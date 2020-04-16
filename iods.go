@@ -1,6 +1,7 @@
 package mp4
 
 import (
+	"fmt"
 	"io"
 )
 
@@ -42,4 +43,9 @@ func (b *IodsBox) Encode(w io.Writer) error {
 	}
 	_, err = w.Write(b.notDecoded)
 	return err
+}
+
+func (b *IodsBox) Dump() {
+	fmt.Printf("Object Descriptor Container Box\n")
+	fmt.Printf("+- Payload: %s\n", string(b.notDecoded))
 }
