@@ -1,6 +1,9 @@
 package mp4
 
-import "io"
+import (
+	"fmt"
+	"io"
+)
 
 // Media Data Box (mdat - optional)
 //
@@ -50,4 +53,9 @@ func (b *MdatBox) Encode(w io.Writer) error {
 	}
 	_, err = io.Copy(w, b.r)
 	return err
+}
+
+func (b *MdatBox) Dump() {
+	fmt.Printf("Media Data Box\n")
+	fmt.Printf("+- ContentSize: %d\n", b.ContentSize)
 }

@@ -2,6 +2,7 @@ package mp4
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 )
 
@@ -69,4 +70,14 @@ func DecodePdin(h BoxHeader, r io.Reader) (Box, error) {
 		b.InfoBoxes = append(b.InfoBoxes, ib)
 	}
 	return b, nil
+}
+
+func (b *PdinBox) Dump() {
+	fmt.Printf("Progressive Download Information Box\n")
+	fmt.Printf("+- Version: %d\n", b.Version)
+	fmt.Printf("+- Flags: %v\n", b.Flags)
+	for _, i := range b.InfoBoxes {
+		fmt.Printf(" +- Rate: %d\n", i.Rate)
+		fmt.Printf(" +- InitialDelay: %d\n", i.InitialDelay)
+	}
 }

@@ -1,6 +1,7 @@
 package mp4
 
 import (
+	"fmt"
 	"io"
 	"log"
 )
@@ -69,4 +70,14 @@ func (b *UdtaBox) Encode(w io.Writer) error {
 		return err
 	}
 	return b.Meta.Encode(w)
+}
+
+func (b *UdtaBox) Dump() {
+	fmt.Printf("User Data Box\n")
+	for _, c := range b.Cprt {
+		c.Dump()
+	}
+	if b.Meta != nil {
+		b.Meta.Dump()
+	}
 }

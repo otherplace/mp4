@@ -14,6 +14,7 @@ type MdiaBox struct {
 	Hdlr *HdlrBox `json:"hdlr,"`
 	Minf *MinfBox `json:"minf,"`
 	//Elng *ElngBox `json:"elng,omitempty"`
+	Boxes []Box
 }
 
 func DecodeMdia(h BoxHeader, r io.Reader) (Box, error) {
@@ -30,6 +31,8 @@ func DecodeMdia(h BoxHeader, r io.Reader) (Box, error) {
 			m.Hdlr = b.(*HdlrBox)
 		case "minf":
 			m.Minf = b.(*MinfBox)
+		default:
+			m.Boxes = append(m.Boxes, b.Box())
 		}
 	}
 	return m, nil

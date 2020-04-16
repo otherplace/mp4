@@ -1,6 +1,7 @@
 package mp4
 
 import (
+	"fmt"
 	"io"
 )
 
@@ -53,4 +54,11 @@ func (b *StsdBox) Encode(w io.Writer) error {
 	copy(buf[4:], b.notDecoded)
 	_, err = w.Write(buf)
 	return err
+}
+
+func (b *StsdBox) Dump() {
+	fmt.Printf("Video Media Header Box\n")
+	fmt.Printf("+- Version: %d\n", b.Version)
+	fmt.Printf("+- Flags: %v\n", b.Flags)
+	fmt.Printf("+- Payload: %s\n", string(b.notDecoded))
 }

@@ -2,6 +2,7 @@ package mp4
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 )
 
@@ -80,7 +81,22 @@ func (b *SidxBox) Size() int {
 }
 
 func (b *SidxBox) Dump() {
-
+	fmt.Printf("Segment Index Box\n")
+	fmt.Printf("+- Version: %d\n", b.Version)
+	fmt.Printf("+- Flags: %v\n", b.Flags)
+	fmt.Printf("+- ReferenceId: %d\n", b.ReferenceId)
+	fmt.Printf("+- Timescale: %d\n", b.Timescale)
+	fmt.Printf("+- EarliestPresentationTime: %d\n", b.EarliestPresentationTime)
+	fmt.Printf("+- FirstOffset: %d\n", b.FirstOffset)
+	fmt.Printf("+- ReferenceCount: %d\n", b.ReferenceCount)
+	for _, r := range b.References {
+		fmt.Printf(" +- ReferenceType: %d\n", r.ReferenceType)
+		fmt.Printf(" +- ReferencedSize: %d\n", r.ReferencedSize)
+		fmt.Printf(" +- SubSegmentDuration: %d\n", r.SubSegmentDuration)
+		fmt.Printf(" +- StartsWithSAP: %d\n", r.StartsWithSAP)
+		fmt.Printf(" +- SAPType: %d\n", r.SAPType)
+		fmt.Printf(" +- SAPDeltaTime: %d\n", r.SAPDeltaTime)
+	}
 }
 
 func (b *SidxBox) Encode(w io.Writer) error {

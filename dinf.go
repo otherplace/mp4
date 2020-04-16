@@ -1,6 +1,9 @@
 package mp4
 
-import "io"
+import (
+	"fmt"
+	"io"
+)
 
 // Data Information Box (dinf - mandatory)
 //
@@ -8,7 +11,8 @@ import "io"
 //
 // Status : decoded
 type DinfBox struct {
-	Dref *DrefBox
+	Dref  *DrefBox
+	Boxes []Box
 }
 
 func DecodeDinf(h BoxHeader, r io.Reader) (Box, error) {
@@ -22,7 +26,7 @@ func DecodeDinf(h BoxHeader, r io.Reader) (Box, error) {
 		case "dref":
 			d.Dref = b.(*DrefBox)
 		default:
-			return nil, ErrBadFormat
+			d.Boxes = append(d.Boxes, b.Box())
 		}
 	}
 	return d, nil
@@ -45,4 +49,8 @@ func (b *DinfBox) Encode(w io.Writer) error {
 		return err
 	}
 	return b.Dref.Encode(w)
+}
+func (b *DinfBox) Dump() {
+	fmt.Printf("Data Information Box\n")
+	b.Dref.Dump()
 }

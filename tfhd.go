@@ -99,6 +99,32 @@ func (b *TfhdBox) Encode(w io.Writer) error {
 }
 func (b *TfhdBox) Dump() {
 	fmt.Printf("Track fragment Header Box\n")
+	fmt.Printf("+- Version: %d\n", b.Version)
+	fmt.Printf("+- Flags: %v\n", b.Flags)
+	fmt.Printf("+- TrackId: %v\n", b.TrackId)
+	flag := BEUint28(b.Flags[:])
+	if compareFlag(flag, BaseDataOffsetPresent) {
+		fmt.Printf("+- BaseDataOffset: %d\n", b.BaseDataOffset)
+	}
+	if compareFlag(flag, SampleDescriptionIndexPresent) {
+		fmt.Printf("+- SampleDescriptionIndex: %d\n", b.SampleDescriptionIndex)
+	}
+	if compareFlag(flag, DefaultSampleDurationPresent) {
+		fmt.Printf("+- DefaultSampleDuration: %d\n", b.DefaultSampleDuration)
+	}
+	if compareFlag(flag, DefaultSampleSizePresent) {
+		fmt.Printf("+- DefaultSampleSize: %d\n", b.DefaultSampleSize)
+	}
+	if compareFlag(flag, DefaultSampleFlagsPresent) {
+		fmt.Printf("+- DefaultSampleFlags: %d\n", b.DefaultSampleFlags)
+	}
+	if compareFlag(flag, DurationIsEmpty) {
+		fmt.Printf("+- DurationIsEmpty: %v\n", b.DurationIsEmpty)
+	}
+	if compareFlag(flag, DefaultBaseIsMoof) {
+		fmt.Printf("+- DefaultBaseIsMoof: %v\n", b.DefaultBaseIsMoof)
+	}
+
 }
 
 func DecodeTfhd(h BoxHeader, r io.Reader) (Box, error) {

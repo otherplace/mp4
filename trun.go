@@ -103,7 +103,10 @@ func (b *TrunBox) Encode(w io.Writer) error {
 	return err
 }
 func (b *TrunBox) Dump() {
-	fmt.Printf("Track fragment Run Box\n")
+	fmt.Printf("Track Fragment Run Box\n")
+	fmt.Printf("+- Version: %d\n", b.Version)
+	fmt.Printf("+- Flags: %v\n", b.Flags)
+	fmt.Printf("+- SampleCount: %d\n", b.SampleCount)
 }
 
 func DecodeTrun(h BoxHeader, r io.Reader) (Box, error) {

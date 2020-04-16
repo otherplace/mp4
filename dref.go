@@ -1,6 +1,7 @@
 package mp4
 
 import (
+	"fmt"
 	"io"
 )
 
@@ -53,4 +54,9 @@ func (b *DrefBox) Encode(w io.Writer) error {
 	copy(buf[4:], b.notDecoded)
 	_, err = w.Write(buf)
 	return err
+}
+
+func (b *DrefBox) Dump() {
+	fmt.Printf("Data Reference Box\n")
+	fmt.Printf(" Payload: %s\n", string(b.notDecoded))
 }
