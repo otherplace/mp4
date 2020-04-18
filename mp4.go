@@ -14,9 +14,9 @@ import (
 //
 // Other boxes can also be present (pdin, moof, mfra, free, ...)
 type MP4 struct {
-	Ftyp *FtypBox `json:"ftyp,omitempty"`
-	Styp *StypBox `json:"styp,omitempty"`
-	//Pdin  *PdinBox `json:"pdin,omitempty"`
+	Ftyp *FtypBox   `json:"ftyp,omitempty"`
+	Styp *StypBox   `json:"styp,omitempty"`
+	Pdin *PdinBox   `json:"pdin,omitempty"`
 	Moov *MoovBox   `json:"moov,omitempty"`
 	Moof []*MoofBox `json:"moof,omitempty"`
 	//Mfra  *MfraBox `json:"mfra,omitempty"`
@@ -72,6 +72,8 @@ func Decode(r io.Reader) (*MP4, error) {
 			v.Sidx = append(v.Sidx, b.(*SidxBox))
 		case "free":
 			v.Free = append(v.Free, b.(*FreeBox))
+		case "pdin":
+			v.Pdin = b.(*PdinBox)
 		//case "udta":
 		//	v.Udta = b.(*UdtaBox)
 		default:
