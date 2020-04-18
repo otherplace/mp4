@@ -90,9 +90,9 @@ func (b *IlocBox) Type() string {
 }
 
 func (b *IlocBox) Size() int {
-	l := BoxHeaderSize + 32
+	l := BoxHeaderSize + 8
 	for _, i := range b.Items {
-		l = l + 96 + int(i.ExtentCount)*24
+		l = l + 12 + int(i.ExtentCount)*24
 	}
 
 	return l

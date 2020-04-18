@@ -13,8 +13,8 @@ type MinfBox struct {
 	Smhd  *SmhdBox `json:"smhd,"`
 	Stbl  *StblBox `json:"stbl,"`
 	Dinf  *DinfBox `json:"dinf,"`
-	Hdlr  *HdlrBox // ISO IEC 14496-12, does not contain hdlr in minf
-	Boxes []Box
+	Hdlr  *HdlrBox `json:"hdlr,omitempty"` // ISO IEC 14496-12, does not contain hdlr in minf
+	Boxes []Box    `json:",omitempty"`
 }
 
 func DecodeMinf(h BoxHeader, r io.Reader) (Box, error) {

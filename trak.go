@@ -14,7 +14,7 @@ type TrakBox struct {
 	Mdia  *MdiaBox `json:"mdia,"`
 	Edts  *EdtsBox `json:"edts,omitempty"`
 	Meta  *MetaBox `json:"meta,omitempty"`
-	Boxes []Box
+	Boxes []Box    `json:",omitempty"`
 }
 
 func DecodeTrak(h BoxHeader, r io.Reader) (Box, error) {

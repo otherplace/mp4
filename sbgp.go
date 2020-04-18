@@ -11,17 +11,17 @@ import (
 // Mandatory:	No
 // Quantity:	 Zero	or	more.
 
+type Entry struct {
+	SampleCount           uint32
+	GroupDescriptionIndex uint32
+}
+
 type SbgpBox struct {
 	Version      byte
 	Flags        [3]byte
 	GroupingType uint32
 	EntryCount   uint32
 	Entries      []*Entry
-}
-
-type Entry struct {
-	SampleCount           uint32
-	GroupDescriptionIndex uint32
 }
 
 func DecodeSbgp(h BoxHeader, r io.Reader) (Box, error) {

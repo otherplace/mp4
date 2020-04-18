@@ -11,8 +11,8 @@ import (
 //
 // Status : decoded
 type DinfBox struct {
-	Dref  *DrefBox
-	Boxes []Box
+	Dref  *DrefBox `json:"dref,"`
+	Boxes []Box    `json:",omitempty"`
 }
 
 func DecodeDinf(h BoxHeader, r io.Reader) (Box, error) {

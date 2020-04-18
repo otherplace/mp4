@@ -37,6 +37,7 @@ func (b *MfhdBox) Encode(w io.Writer) error {
 	buf[1], buf[2], buf[3] = b.Flags[0], b.Flags[1], b.Flags[2]
 	binary.BigEndian.PutUint32(buf[4:], b.SequenceNumber)
 
+	_, err = w.Write(buf)
 	return err
 }
 func (b *MfhdBox) Dump() {
