@@ -14,9 +14,9 @@ import (
 //
 // Other boxes can also be present (pdin, moof, mfra, free, ...)
 type MP4 struct {
-	Ftyp *FtypBox `json:"ftyp,omitempty"`
-	Styp *StypBox `json:"styp,omitempty"`
-	//Pdin  *PdinBox `json:"pdin,omitempty"`
+	Ftyp *FtypBox   `json:"ftyp,omitempty"`
+	Styp *StypBox   `json:"styp,omitempty"`
+	Pdin *PdinBox   `json:"pdin,omitempty"`
 	Moov *MoovBox   `json:"moov,omitempty"`
 	Moof []*MoofBox `json:"moof,omitempty"`
 	//Mfra  *MfraBox `json:"mfra,omitempty"`
@@ -27,10 +27,20 @@ type MP4 struct {
 	Sidx []*SidxBox `json:"sidx,omitempty"`
 	//Ssix  []*SSixBox `json:"ssix,omitempty"`
 	//Prft  []*PrftBox `json:"prft,omitempty"`
-	//Mfra  *MfraBox `json:"mfra,omitempty"`
+	Mfra *MfraBox `json:"mfra,omitempty"`
 	Meta *MetaBox `json:"meta,omitempty"`
 	//Meco  *MetaBox `json:"meco,omitempty"`
-	boxes []Box `json:"unkn,omitempty"`
+	boxes []Box `json:",omitempty"`
+}
+
+type fMP4 struct {
+	Styp *StypBox `json:"styp,omitempty"`
+	//Pdin  *PdinBox `json:"pdin,omitempty"`
+	Moof []*MoofBox `json:"moof,omitempty"`
+	//Mfra  *MfraBox `json:"mfra,omitempty"`
+	Mdat  *MdatBox   `json:"mdat,omitempty"`
+	Free  []*FreeBox `json:"free,omitempty"`
+	boxes []Box      `json:",omitempty"`
 }
 
 // Decode decodes a media from a Reader
@@ -46,6 +56,8 @@ func Decode(r io.Reader) (*MP4, error) {
 		switch b.Type() {
 		case "ftyp":
 			v.Ftyp = b.(*FtypBox)
+		case "mfra":
+			v.Mfra = b.(*MfraBox)
 		case "styp":
 			v.Styp = b.(*StypBox)
 		case "meta":
@@ -60,8 +72,10 @@ func Decode(r io.Reader) (*MP4, error) {
 			v.Sidx = append(v.Sidx, b.(*SidxBox))
 		case "free":
 			v.Free = append(v.Free, b.(*FreeBox))
-		case "udta":
-			v.Udta = b.(*UdtaBox)
+		case "pdin":
+			v.Pdin = b.(*PdinBox)
+		//case "udta":
+		//	v.Udta = b.(*UdtaBox)
 		default:
 			if decoders[b.Type()] != nil {
 				v.boxes = append(v.boxes, b.Box())
@@ -80,6 +94,9 @@ func (m *MP4) Dump() {
 	}
 	if m.Styp != nil {
 		m.Styp.Dump()
+	}
+	if m.Mfra != nil {
+		m.Mfra.Dump()
 	}
 	if m.Moov != nil {
 		m.Moov.Dump()
@@ -111,17 +128,51 @@ func (m *MP4) Boxes() []Box {
 
 // Encode encodes a media to a Writer
 func (m *MP4) Encode(w io.Writer) error {
-	err := m.Ftyp.Encode(w)
-	if err != nil {
-		return err
+	if m.Ftyp != nil {
+		err := m.Ftyp.Encode(w)
+		if err != nil {
+			return err
+		}
 	}
-	err = m.Moov.Encode(w)
-	if err != nil {
-		return err
+	if m.Styp != nil {
+		err := m.Styp.Encode(w)
+		if err != nil {
+			return err
+		}
+	}
+	if m.Moov != nil {
+		err := m.Moov.Encode(w)
+		if err != nil {
+			return err
+		}
+	}
+	if m.Mdat != nil {
+		err := m.Mdat.Encode(w)
+		if err != nil {
+			return err
+		}
+	}
+	for _, f := range m.Free {
+		err := f.Encode(w)
+		if err != nil {
+			return err
+		}
+	}
+	for _, s := range m.Sidx {
+		err := s.Encode(w)
+		if err != nil {
+			return err
+		}
+	}
+	if m.Mfra != nil {
+		err := m.Mfra.Encode(w)
+		if err != nil {
+			return err
+		}
 	}
 	for _, b := range m.boxes {
 		if b.Type() != "ftyp" && b.Type() != "moov" {
-			err = b.Encode(w)
+			err := b.Encode(w)
 			if err != nil {
 				return err
 			}

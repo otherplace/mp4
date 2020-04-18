@@ -14,14 +14,14 @@ import (
 // The table contains all information relevant to data samples (times, chunks, sizes, ...)
 type StblBox struct {
 	Sbgp  []*SbgpBox `json:"sbgp,omitempty"`
-	Stsd  *StsdBox
-	Stts  *SttsBox
-	Stss  *StssBox
-	Stsc  *StscBox
-	Stsz  *StszBox
-	Stco  *StcoBox
-	Ctts  *CttsBox
-	Boxes []Box
+	Stsd  *StsdBox   `json:"stsd,"`
+	Stts  *SttsBox   `json:"sttd,"`
+	Stss  *StssBox   `json:"stss,omitempty"`
+	Stsc  *StscBox   `json:"stsc,"`
+	Stsz  *StszBox   `json:"stsz,"`
+	Stco  *StcoBox   `json:"stco,"`
+	Ctts  *CttsBox   `json:"ctts,omitempty"`
+	Boxes []Box      `json:",omitempty"`
 }
 
 func DecodeStbl(h BoxHeader, r io.Reader) (Box, error) {

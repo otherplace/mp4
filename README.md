@@ -1,6 +1,6 @@
 # mp4
 
-A encoder/decoder class, io.Reader and io.Writer compatible, usable for HTTP pseudo streaming
+A encoder/decoder class, io.Reader and io.Writer compatible
 
 For the complete MP4 specifications, see https://standards.iso.org/ittf/PubliclyAvailableStandards/c068960_ISO_IEC_14496-12_2015.zip 
 

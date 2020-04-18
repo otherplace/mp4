@@ -12,7 +12,7 @@ import (
 type MoofBox struct {
 	Mfhd  *MfhdBox   `json:"mfhd,"`
 	Traf  []*TrafBox `json:"traf,omitempty"`
-	Boxes []Box
+	Boxes []Box      `json:",omitempty"`
 }
 
 func (b *MoofBox) Box() Box {

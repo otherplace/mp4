@@ -19,7 +19,7 @@ type MetaBox struct {
 	//Pitm *PitmBox `json:"pitm,omitempty"`
 	//Ipro *IproBox `json:"ipro,omitempty
 	//Iinf *IinfBox `json:"iinf,omitempty"`
-	Boxes []Box
+	Boxes []Box `json:",omitempty"`
 }
 
 func DecodeMeta(h BoxHeader, r io.Reader) (Box, error) {

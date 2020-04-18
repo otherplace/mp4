@@ -19,7 +19,7 @@ type TrafBox struct {
 	//Saiz *SaioBox `json:"saio,omitempty"`
 	Tfdt  *TfdtBox `json:"tfdt,omitempty"`
 	Meta  *MetaBox `json:"meta,omitempty"`
-	Boxes []Box
+	Boxes []Box    `json:",omitempty"`
 }
 
 func (b *TrafBox) Box() Box {

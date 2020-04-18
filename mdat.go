@@ -14,6 +14,7 @@ import (
 // It is not read, only the io.Reader is stored, and will be used to Encode (io.Copy) the box to a io.Writer.
 type MdatBox struct {
 	ContentSize uint32
+	data        []byte
 	r           io.Reader
 }
 
@@ -25,6 +26,7 @@ func DecodeMdat(h BoxHeader, r io.Reader) (Box, error) {
 		r = lr.R
 	}
 	return &MdatBox{
+		data:        data,
 		r:           r,
 		ContentSize: uint32(n),
 	}, nil
@@ -51,7 +53,7 @@ func (b *MdatBox) Encode(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	_, err = io.Copy(w, b.r)
+	_, err = w.Write(b.data)
 	return err
 }
 
