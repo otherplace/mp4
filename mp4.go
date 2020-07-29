@@ -19,7 +19,6 @@ type MP4 struct {
 	Pdin *PdinBox   `json:"pdin,omitempty"`
 	Moov *MoovBox   `json:"moov,omitempty"`
 	Moof []*MoofBox `json:"moof,omitempty"`
-	//Mfra  *MfraBox `json:"mfra,omitempty"`
 	Mdat *MdatBox   `json:"mdat,omitempty"`
 	Free []*FreeBox `json:"free,omitempty"`
 	//Skip  []*SkipBox `json:"skip,omitempty"`
@@ -36,8 +35,8 @@ type MP4 struct {
 type fMP4 struct {
 	Styp *StypBox `json:"styp,omitempty"`
 	//Pdin  *PdinBox `json:"pdin,omitempty"`
-	Moof []*MoofBox `json:"moof,omitempty"`
-	//Mfra  *MfraBox `json:"mfra,omitempty"`
+	Moof  []*MoofBox `json:"moof,omitempty"`
+	Mfra  *MfraBox   `json:"mfra,omitempty"`
 	Mdat  *MdatBox   `json:"mdat,omitempty"`
 	Free  []*FreeBox `json:"free,omitempty"`
 	boxes []Box      `json:",omitempty"`
