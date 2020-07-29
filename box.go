@@ -1,6 +1,7 @@
 package mp4
 
 import (
+	"bytes"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -74,8 +75,9 @@ func init() {
 
 // The header of a box
 type BoxHeader struct {
-	Type string
-	Size uint32
+	Type      string
+	Size      uint32
+	LargeSize uint64
 }
 
 // DecodeHeader decodes a box header (size + box type)
@@ -88,7 +90,27 @@ func DecodeHeader(r io.Reader) (BoxHeader, error) {
 	if n != BoxHeaderSize {
 		return BoxHeader{}, ErrTruncatedHeader
 	}
-	return BoxHeader{string(buf[4:8]), binary.BigEndian.Uint32(buf[0:4])}, nil
+	var lsz uint64
+	sz := binary.BigEndian.Uint32(buf[0:4])
+	if sz == 0 {
+		secBuf := &bytes.Buffer{}
+		nRead, err := io.Copy(secBuf, r)
+		if err != nil {
+			return BoxHeader{}, ErrTruncatedHeader
+		}
+		sz = uint32(nRead)
+	} else if sz == 1 {
+		secBuf := make([]byte, BoxHeaderSize)
+		n, err := r.Read(secBuf)
+		if err != nil {
+			return BoxHeader{}, err
+		}
+		if n != BoxHeaderSize {
+			return BoxHeader{}, ErrTruncatedHeader
+		}
+		lsz = binary.BigEndian.Uint64(secBuf)
+	}
+	return BoxHeader{string(buf[4:8]), sz, lsz}, nil
 }
 
 // EncodeHeader encodes a box header to a writer
@@ -118,7 +140,12 @@ func DecodeBox(h BoxHeader, r io.Reader) (Box, error) {
 		log.Printf("Error while decoding %s: unknown box type, len: %d", h.Type, h.Size)
 		d = DecodeUkwnBox
 	}
-	b, err := d(h, io.LimitReader(r, int64(h.Size-BoxHeaderSize)))
+	var readSize int64
+	readSize = int64(h.Size - BoxHeaderSize)
+	if h.Size == 1 {
+		readSize = int64(h.LargeSize - (BoxHeaderSize * 2))
+	}
+	b, err := d(h, io.LimitReader(r, readSize))
 	if err != nil {
 		log.Printf("Error while decoding %v:%s", h, err)
 		return nil, err

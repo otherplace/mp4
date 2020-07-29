@@ -77,7 +77,7 @@ func (m mdat) lastSample(tnum int, timecode time.Duration) uint32 {
 type clipFilter struct {
 	err        error
 	begin, end time.Duration
-	mdatSize   uint32
+	mdatSize   uint32 // FIXME:
 	chunks     mdat
 }
 
@@ -341,7 +341,7 @@ func (f *clipFilter) FilterMdat(w io.Writer, m *mp4.MdatBox) error {
 	if f.err != nil {
 		return f.err
 	}
-	m.ContentSize = f.mdatSize
+	m.ContentSize = uint64(f.mdatSize) // FIXME:
 	err := mp4.EncodeHeader(m, w)
 	if err != nil {
 		return err
