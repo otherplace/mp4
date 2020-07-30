@@ -55,6 +55,7 @@ func init() {
 		"sidx": DecodeSidx,
 		"stbl": DecodeStbl,
 		"stco": DecodeStco,
+		"co64": DecodeCo64,
 		"stsc": DecodeStsc,
 		"stsz": DecodeStsz,
 		"ctts": DecodeCtts,
@@ -70,6 +71,7 @@ func init() {
 		"meta": DecodeMeta,
 		"mdat": DecodeMdat,
 		"free": DecodeFree,
+		"sgpd": DecodeSgpd,
 	}
 }
 
@@ -78,6 +80,28 @@ type BoxHeader struct {
 	Type      string
 	Size      uint32
 	LargeSize uint64
+}
+
+type FullBox struct {
+	Version byte
+	Flags   [3]byte
+}
+
+func (b *FullBox) Size() int {
+	return 4
+}
+
+func DecodeFullBox(data []byte) FullBox {
+	return FullBox{
+		Version: data[0],
+		Flags:   [3]byte{data[1], data[2], data[3]},
+	}
+}
+
+func EncodeFullBox(b FullBox, buf []byte) error {
+	buf[0] = b.Version
+	buf[1], buf[2], buf[3] = b.Flags[0], b.Flags[1], b.Flags[2]
+	return nil
 }
 
 // DecodeHeader decodes a box header (size + box type)

@@ -13,7 +13,7 @@ type TrafBox struct {
 	Tfhd *TfhdBox   `json:"tfhd,omitempty"`
 	Trun []*TrunBox `json:"trun,omitempty"`
 	//Sbgp *SbgpBox `json:"sbgp,omitempty"`
-	//Sgpd *SbgpBox `json:"sgpd,omitempty"`
+	Sgpd *SgpdBox `json:"sgpd,omitempty"`
 	//Subs *SubsBox `json:"subs,omitempty"`
 	//Saiz *SaizBox `json:"saiz,omitempty"`
 	//Saiz *SaioBox `json:"saio,omitempty"`
@@ -65,6 +65,8 @@ func DecodeTraf(h BoxHeader, r io.Reader) (Box, error) {
 	t := &TrafBox{}
 	for _, b := range l {
 		switch b.Type() {
+		case "sgpd":
+			t.Sgpd = b.(*SgpdBox)
 		case "tfhd":
 			t.Tfhd = b.(*TfhdBox)
 		case "tfdt":

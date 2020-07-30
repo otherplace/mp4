@@ -19,8 +19,10 @@ type StblBox struct {
 	Stss  *StssBox   `json:"stss,omitempty"`
 	Stsc  *StscBox   `json:"stsc,"`
 	Stsz  *StszBox   `json:"stsz,"`
-	Stco  *StcoBox   `json:"stco,"`
+	Stco  *StcoBox   `json:"stco,omitempty"`
+	Co64  *Co64Box   `json:"co64,omitempty"`
 	Ctts  *CttsBox   `json:"ctts,omitempty"`
+	Sgpd  *SgpdBox   `json:"jspd,omitempty"`
 	Boxes []Box      `json:",omitempty"`
 }
 
@@ -34,6 +36,8 @@ func DecodeStbl(h BoxHeader, r io.Reader) (Box, error) {
 		switch b.Type() {
 		case "sbgp":
 			s.Sbgp = append(s.Sbgp, b.(*SbgpBox))
+		case "sgpd":
+			s.Sgpd = b.(*SgpdBox)
 		case "stsd":
 			s.Stsd = b.(*StsdBox)
 		case "stts":
@@ -46,6 +50,8 @@ func DecodeStbl(h BoxHeader, r io.Reader) (Box, error) {
 			s.Stsz = b.(*StszBox)
 		case "stco":
 			s.Stco = b.(*StcoBox)
+		case "co64":
+			s.Co64 = b.(*Co64Box)
 		case "ctts":
 			s.Ctts = b.(*CttsBox)
 		default:
